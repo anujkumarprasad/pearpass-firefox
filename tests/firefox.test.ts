@@ -22,7 +22,7 @@ describe("firefox build", () => {
   test("writes a gecko manifest without chrome-only permissions", async () => {
     const dist = await build();
     const manifest = JSON.parse(await readFile(path.join(dist, "manifest.json"), "utf8"));
-    expect(manifest.browser_specific_settings.gecko.id).toBe("pass@pears.com");
+    expect(manifest.browser_specific_settings.gecko.id).toBe("pearpass-firefox@anujkp.dev");
     expect(manifest.browser_specific_settings.gecko.data_collection_permissions.required).toEqual([
       "authenticationInfo",
       "websiteContent"

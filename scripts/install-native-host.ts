@@ -9,7 +9,7 @@ const manifest = {
   description: "PearPass Native Messaging Host",
   path: hostPath,
   type: "stdio",
-  allowed_extensions: ["pass@pears.com", "pass-nightly@pears.com"]
+  allowed_extensions: ["pearpass-firefox@anujkp.dev", "pass@pears.com", "pass-nightly@pears.com"]
 };
 
 const destinations = [

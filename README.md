@@ -46,7 +46,7 @@ bun run lint
 
 ## Install
 
-The extension id is `pass@pears.com`. Firefox Release, including Firefox 157, will not keep an unsigned add-on after quit. Use the temporary load on that build. A file install from `about:addons` stays only after Mozilla signs the `.xpi`, or on Developer Edition, Nightly, or ESR with signature checks turned off.
+The extension id is `pearpass-firefox@anujkp.dev`. Firefox Release, including Firefox 157, will not keep an unsigned add-on after quit. Use the temporary load on that build. A file install from `about:addons` stays only after Mozilla signs the `.xpi`, or on Developer Edition, Nightly, or ESR with signature checks turned off.
 
 ### Temporary load
 
@@ -71,9 +71,13 @@ On Firefox Release that dialog reports that the add-on could not be installed be
 
 ### Keep it without a public store listing
 
-Submit `pearpass-firefox-2.1.0.xpi` at [addons.mozilla.org/developers](https://addons.mozilla.org/developers/) and choose **On your own**. That signs the file and does not list it in the store. Download the signed `.xpi`, then use **Install Add-on From File** as above.
+Copy `.env.example` to `.env` and set `AMO_JWT_ISSUER` and `AMO_JWT_SECRET` from [addons.mozilla.org/developers/addon/api/key](https://addons.mozilla.org/developers/addon/api/key/). `.env` is gitignored.
 
-Mozilla will not sign a second add-on that uses PearPass's id `pass@pears.com`. Change `browser_specific_settings.gecko.id` in `firefox/manifest.json` to an id you control, such as `pearpass-firefox@anujkp.dev`, run `bun run build` and `bun run pack`, and put that same id in `allowed_extensions` before `bun run install-host`.
+```bash
+bun run sign
+```
+
+That submits `dist/` to Mozilla as an unlisted add-on and writes the signed file under `web-ext-artifacts/`. Install that signed `.xpi` from **Install Add-on From File**. After the id change, run `bun run install-host` once so the desktop app allows `pearpass-firefox@anujkp.dev`.
 
 ### Keep the unsigned package on another Firefox build
 
@@ -101,7 +105,7 @@ That writes `com.pears.pass.json` to:
 - `~/.mozilla/native-messaging-hosts/`
 - `~/snap/firefox/common/.mozilla/native-messaging-hosts/` when that directory is created for the Snap build
 
-The manifest allows `pass@pears.com` and `pass-nightly@pears.com`. The host script looks for `/tmp/.mount_Pear*` and starts the desktop app's native messaging bridge. If the desktop app is not running, the script exits and the extension reports that the app is unavailable.
+The manifest allows `pearpass-firefox@anujkp.dev`, `pass@pears.com`, and `pass-nightly@pears.com`. The host script looks for `/tmp/.mount_Pear*` and starts the desktop app's native messaging bridge. If the desktop app is not running, the script exits and the extension reports that the app is unavailable.
 
 The desktop app may later replace `com.pears.pass.json` with its own file. That copy often points at a host script with one hard-coded mount path, such as `/tmp/.mount_PearPaGCiach`. That path changes every time the AppImage starts. If the extension stops seeing the desktop app after a restart, run `bun run install-host` again.
 
