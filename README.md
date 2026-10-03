@@ -30,27 +30,61 @@ bun run build
 
 `bun test` rebuilds `dist/` and checks the manifest, popup script paths, and the Firefox clipboard patch.
 
-Load it in Firefox:
-
-1. Open `about:debugging#/runtime/this-firefox`.
-2. Click **Load Temporary Add-on**.
-3. Choose `dist/manifest.json`.
-
-The extension id is `pass@pears.com`. A temporary add-on is removed when Firefox quits. Load it again after the next start.
-
 Pack an `.xpi` of the current `dist/` tree:
 
 ```bash
 bun run pack
 ```
 
-That writes `pearpass-firefox-2.1.0.xpi` in this directory.
+That writes `pearpass-firefox-2.1.0.xpi` in this directory. The file is gitignored. Run `bun run pack` again after you clone the repo.
 
 Lint the built add-on:
 
 ```bash
 bun run lint
 ```
+
+## Install
+
+The extension id is `pass@pears.com`. Firefox Release, including Firefox 157, will not keep an unsigned add-on after quit. Use the temporary load on that build. A file install from `about:addons` stays only after Mozilla signs the `.xpi`, or on Developer Edition, Nightly, or ESR with signature checks turned off.
+
+### Temporary load
+
+This is the install that works on normal Firefox.
+
+1. Run `bun run build`.
+2. Open `about:debugging#/runtime/this-firefox`.
+3. Click **Load Temporary Add-on**.
+4. Choose `dist/manifest.json`.
+
+Firefox removes the add-on when it quits. Load `dist/manifest.json` again after the next start.
+
+### Install the .xpi from about:addons
+
+1. Run `bun run pack`.
+2. Open `about:addons`.
+3. Click the gear next to **Manage Your Extensions**.
+4. Choose **Install Add-on From File**.
+5. Select `pearpass-firefox-2.1.0.xpi` in this directory.
+
+On Firefox Release that dialog reports that the add-on could not be installed because it is not signed. The file itself is in the right place. The browser is refusing the unsigned package.
+
+### Keep it without a public store listing
+
+Submit `pearpass-firefox-2.1.0.xpi` at [addons.mozilla.org/developers](https://addons.mozilla.org/developers/) and choose **On your own**. That signs the file and does not list it in the store. Download the signed `.xpi`, then use **Install Add-on From File** as above.
+
+Mozilla will not sign a second add-on that uses PearPass's id `pass@pears.com`. Change `browser_specific_settings.gecko.id` in `firefox/manifest.json` to an id you control, such as `pearpass-firefox@anujkp.dev`, run `bun run build` and `bun run pack`, and put that same id in `allowed_extensions` before `bun run install-host`.
+
+### Keep the unsigned package on another Firefox build
+
+Firefox Developer Edition, Nightly, and ESR honor `xpinstall.signatures.required`. Release and Beta ignore it.
+
+1. Open `about:config` in that Firefox.
+2. Set `xpinstall.signatures.required` to `false`.
+3. Restart Firefox.
+4. Install `pearpass-firefox-2.1.0.xpi` from **Install Add-on From File**.
+
+The add-on then stays across restarts. The desktop app still has to be running, and `bun run install-host` still has to be done once.
 
 ## Connect the desktop app
 
