@@ -1,0 +1,1 @@
+const t=typeof chrome<"u"?chrome.runtime:browser.runtime,e=document.createElement("script");e.src=t.getURL("inject.js");e.onload=()=>e.remove();(document.head||document.documentElement).appendChild(e);

@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "PearPass",
+  "version": "2.1.0",
+  "description": "Password manager extension for PearPass",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "pass@pears.com",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["authenticationInfo", "websiteContent"],
+        "optional": ["technicalAndInteraction"]
+      }
+    }
+  },
+  "permissions": [
+    "storage",
+    "nativeMessaging",
+    "clipboardRead",
+    "clipboardWrite",
+    "alarms",
+    "activeTab"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "PearPass",
+    "default_icon": {
+      "16": "icon-16.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["inject.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["content-popups.html", "inject.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

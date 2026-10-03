@@ -1,0 +1,14 @@
+{
+  "name": "pearpass-firefox",
+  "version": "2.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Firefox build of the PearPass browser extension",
+  "scripts": {
+    "build": "bun run scripts/build.ts",
+    "pack": "bun run scripts/pack.ts",
+    "install-host": "bun run scripts/install-native-host.ts",
+    "check": "bun test",
+    "lint": "bunx --bun web-ext lint --source-dir dist --self-hosted"
+  }
+}
