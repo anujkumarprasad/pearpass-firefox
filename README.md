@@ -105,9 +105,9 @@ That writes `com.pears.pass.json` to:
 - `~/.mozilla/native-messaging-hosts/`
 - `~/snap/firefox/common/.mozilla/native-messaging-hosts/` when that directory is created for the Snap build
 
-The manifest allows `pearpass-firefox@anujkp.dev`, `pass@pears.com`, and `pass-nightly@pears.com`. The host script looks for `/tmp/.mount_Pear*` and starts the desktop app's native messaging bridge. If the desktop app is not running, the script exits and the extension reports that the app is unavailable.
+The manifest allows `pearpass-firefox@anujkp.dev`, `pass@pears.com`, and `pass-nightly@pears.com`. When the desktop app has already written `~/.config/PearPass/native-messaging/pearpass-native-host.sh`, the manifest keeps that path. The app rewrites the mount path inside that script on every launch. Otherwise the manifest points at `native/pearpass-native-host.sh`, which finds `/tmp/.mount_Pear*` itself. If the desktop app is not running, the host exits and the extension reports that the app is unavailable.
 
-The desktop app may later replace `com.pears.pass.json` with its own file. That copy often points at a host script with one hard-coded mount path, such as `/tmp/.mount_PearPaGCiach`. That path changes every time the AppImage starts. If the extension stops seeing the desktop app after a restart, run `bun run install-host` again.
+Turning on Browser Sync in the desktop app replaces `com.pears.pass.json` and drops `pearpass-firefox@anujkp.dev`. Firefox then refuses to start the host, and the popup says `Disconnected from native host` even while the app is open. Run `bun run install-host` again after enabling Browser Sync. That puts the Firefox id back without changing the desktop host path.
 
 Check the desktop connection without opening Firefox:
 
