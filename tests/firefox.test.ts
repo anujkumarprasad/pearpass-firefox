@@ -45,6 +45,7 @@ describe("firefox build", () => {
     const background = await readFile(path.join(dist, "background.js"), "utf8");
     expect(background).toContain('document.execCommand("copy")');
     expect(background).not.toContain("chrome.offscreen");
+    expect(background).toContain('const ir="com.pears.pass.firefox"');
 
     const host = await readFile(path.join(root, "native", "pearpass-native-host.sh"), "utf8");
     expect(host).toContain("native-messaging-bridge.bundle.cjs");

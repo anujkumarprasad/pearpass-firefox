@@ -19,10 +19,19 @@ const firefoxClipboardBranch =
  * offscreen API, and a background script does not receive its own
  * runtime.sendMessage, so the clear has to run in this event page.
  */
+/** Desktop Browser Sync only allows pass@pears.com on com.pears.pass. */
+export const firefoxNativeHostName = "com.pears.pass.firefox";
+
 export function patchBackgroundForFirefox(source: string): string {
-  const patched = source.replaceAll(chromeClipboardBranch, firefoxClipboardBranch);
+  const patched = source
+    .replaceAll(chromeClipboardBranch, firefoxClipboardBranch)
+    .replaceAll('const ir="com.pears.pass"', `const ir="${firefoxNativeHostName}"`);
   if (patched === source || patched.includes("chrome.offscreen")) {
     throw new Error("Could not remove the Chrome offscreen clipboard path");
+  }
+  const renamed = patched.replaceAll(`const ir="${firefoxNativeHostName}"`, "");
+  if (renamed.includes('const ir="com.pears.pass"')) {
+    throw new Error("Could not point the background page at the Firefox native host");
   }
   return patched;
 }

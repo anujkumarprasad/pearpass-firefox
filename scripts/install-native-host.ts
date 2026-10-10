@@ -1,6 +1,7 @@
 import { access, chmod, mkdir, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { firefoxNativeHostName } from "./build.ts";
 
 const root = path.resolve(import.meta.dirname, "..");
 const repoHost = path.join(root, "native", "pearpass-native-host.sh");
@@ -44,22 +45,26 @@ const host = await hostPath();
 await chmod(repoHost, 0o755);
 if (host !== repoHost) await chmod(host, 0o755);
 
-const destinations = [
-  path.join(os.homedir(), ".mozilla", "native-messaging-hosts", "com.pears.pass.json"),
-  path.join(os.homedir(), "snap", "firefox", "common", ".mozilla", "native-messaging-hosts", "com.pears.pass.json")
+const hostDirs = [
+  path.join(os.homedir(), ".mozilla", "native-messaging-hosts"),
+  path.join(os.homedir(), ".config", "mozilla", "native-messaging-hosts"),
+  path.join(os.homedir(), "snap", "firefox", "common", ".mozilla", "native-messaging-hosts")
 ];
 
-for (const destination of destinations) {
-  await mkdir(path.dirname(destination), { recursive: true });
-  const manifest = {
-    name: "com.pears.pass",
-    description: "PearPass Native Messaging Host",
-    path: host,
-    type: "stdio",
-    allowed_extensions: await allowedExtensions(destination)
-  };
-  await writeFile(destination, `${JSON.stringify(manifest, null, 2)}\n`);
-  console.log(`Installed native host manifest at ${destination}`);
+for (const dir of hostDirs) {
+  await mkdir(dir, { recursive: true });
+  for (const name of ["com.pears.pass.json", `${firefoxNativeHostName}.json`]) {
+    const destination = path.join(dir, name);
+    const manifest = {
+      name: name.replace(/\.json$/, ""),
+      description: "PearPass Native Messaging Host",
+      path: host,
+      type: "stdio",
+      allowed_extensions: await allowedExtensions(destination)
+    };
+    await writeFile(destination, `${JSON.stringify(manifest, null, 2)}\n`);
+    console.log(`Installed native host manifest at ${destination}`);
+  }
 }
 
 console.log("Start the PearPass desktop app before using the extension.");
