@@ -24,7 +24,10 @@ if (-not $wrapper) {
   throw "PearPass native host was not found. Open the PearPass desktop app, turn on browser integration, then run this script again. Looked in: $($candidates -join '; ')"
 }
 
-$dir = Join-Path $env:LOCALAPPDATA "PearPass\NativeMessaging"
+# The desktop app owns %LOCALAPPDATA%\PearPass\NativeMessaging\com.pears.pass.firefox.json
+# and rewrites it with name "com.pears.pass" and only the official add-on ids.
+# Firefox rejects that file for this host name. Keep our manifest beside it.
+$dir = Join-Path $env:LOCALAPPDATA "PearPassFirefox"
 New-Item -ItemType Directory -Force -Path $dir | Out-Null
 $manifestPath = Join-Path $dir "$hostName.json"
 

@@ -127,7 +127,7 @@ Open the PearPass desktop app once, then in PowerShell from this checkout:
 powershell -ExecutionPolicy Bypass -File scripts\install-native-host-windows.ps1
 ```
 
-Quit Firefox, start PearPass, then load the temporary add-on again. The script points the registry key at the desktop app's `pearpass-native-host.cmd`.
+Quit Firefox, start PearPass, then load the add-on again. The script points `HKCU\Software\Mozilla\NativeMessagingHosts\com.pears.pass.firefox` at a manifest under `%LOCALAPPDATA%\PearPassFirefox\`. That file is separate from the one PearPass rewrites. The desktop copy is named `com.pears.pass` and only allows the official add-on ids, so a signed install of this add-on disconnects if the registry points at it. A temporary add-on can still connect before that rewrite. Run the script again if you open PearPass before the first registration.
 
 ## What the Firefox build changes
 
