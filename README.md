@@ -117,6 +117,18 @@ node scripts/probe-native.mjs
 
 The probe uses the host script at `~/.config/PearPass/native-messaging/pearpass-native-host.sh`. A successful run prints `"available": true`.
 
+### Windows
+
+`bun run install-host` is Linux only. On Windows you have to run `scripts/install-native-host-windows.ps1` once. Firefox reads native hosts from the registry, not from `~/.mozilla`. The desktop app registers `com.pears.pass` and only allows `pass@pears.com` and `pass-nightly@pears.com`. This extension calls `com.pears.pass.firefox`, so onboarding fails with `Disconnected from native host` until that script registers the name.
+
+Open the PearPass desktop app once, then in PowerShell from this checkout:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\install-native-host-windows.ps1
+```
+
+Quit Firefox, start PearPass, then load the temporary add-on again. The script points the registry key at the desktop app's `pearpass-native-host.cmd`.
+
 ## What the Firefox build changes
 
 - Background is an event page (`background.scripts`), not a service worker.
